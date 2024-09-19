@@ -18,6 +18,8 @@ pipeline {
                     // Clean and build the Maven project
                     echo 'Building eureka-server service...'
                     bat 'mvn clean package'
+                    echo 'Deploying the eureka-server'
+                    bat 'java -jar target/eureka-server-0.0.1-SNAPSHOT.jar'
         }
                     dir('apigateway')
         {
@@ -55,8 +57,7 @@ pipeline {
                     echo 'Building configclient service...'
                     bat 'mvn clean package'
         }
-                }
+            }
         }
-     
-    }
+        }
 }
