@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RefreshScope  // Enable dynamic refresh for configuration properties
 public class ConfigClientController {
 
-    @Value("${info.environment}")
+    @Value("${info.environment:default-env}")
     private String environment;
 
-    @Value("${configclient.message}")
+    @Value("${configclient.message:default-message}")
     private String message;
 
-    @Value("${configclient.database.url}")
+    @Value("${configclient.database.url:default-url}")
     private String dbUrl;
 
-    @Value("${configclient.database.username}")
+    @Value("${configclient.database.username:default-db-username}")
     private String dbUsername;
 
-    @Value("${configclient.database.password}")
+    @Value("${configclient.database.password:default-password}")
     private String dbPassword;
 
     @GetMapping("/info")
