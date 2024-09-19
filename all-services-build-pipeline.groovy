@@ -57,12 +57,6 @@ pipeline {
         }
                 }
         }
-        stage('Docker Build and Run') {
-            steps {
-                echo 'Building and running Docker containers...'
-                // Build and run all services using docker-compose
-                bat 'docker-compose -f docker-compose.yml up --build -d'
-            }
-        }
+     
     }
 }
