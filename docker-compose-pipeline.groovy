@@ -4,7 +4,7 @@ pipeline {
         tools {
         maven 'MAVEN_HOME' // Use the name of the Maven installation you added
         }
-        stages {
+   stages {
         stage('Checkout') {
             steps {
                 git 'https://github.com/vikarm-verma/docker-repo.git'
@@ -17,5 +17,5 @@ pipeline {
                 bat 'docker-compose -f docker-compose.yml up --build -d'
             }
         }
-    }
+        }
 }
