@@ -14,9 +14,9 @@ pipeline {
             steps {
                 echo 'Building and running Docker containers...'
                 // Build and run all services using docker-compose
-		bat 'docker-compose.yml down'
-                bat 'docker-compose.yml build --no-cache'
-		bat 'docker-compose.yml up'
+		bat 'docker-compose down'
+                bat 'docker-compose build --no-cache'
+		bat 'docker-compose up'
             }
         }
         }
