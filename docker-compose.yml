@@ -1,0 +1,149 @@
+services:
+  eureka-server:
+    image: eurekaserver
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-network
+    container_name: eureka-server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s 
+    environment:
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRIES=false
+
+  zipkin:
+    image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9411/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      - STORAGE_TYPE=mem
+      - SPRING_PROFILES_ACTIVE=docker
+
+
+  api-gateway:
+    image: apigateway
+    build: ./apigateway
+    depends_on:
+     - eureka-server
+        #condition: service_healthy
+    ports:
+      - "8060:8060"
+    networks:
+      - microservices-network
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+
+
+  userservice:
+    image: userservice
+    build: ./userservice
+    depends_on:
+     - eureka-server
+        #condition: service_healthy
+     - zipkin
+        #condition: service_healthy         
+    ports:
+      - "8071:8071"
+    networks:
+      - microservices-network
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_TRACING_ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+      #- SPRING.ZIPKIN.BASE-URL=http://zipkin:9411/api/v2/spans
+      - SPRING_PROFILES_ACTIVE=docker
+
+
+  productservice:
+    image: productservice
+    build: ./productservice
+    depends_on: 
+     - eureka-server
+        #condition: service_healthy
+     - zipkin
+        #condition: service_healthy    
+    ports:
+      - "8072:8072"
+    networks:
+      - microservices-network
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_TRACING_ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+      #- SPRING.ZIPKIN.BASE-URL=http://zipkin:9411/api/v2/spans
+      - SPRING_PROFILES_ACTIVE=docker
+
+
+  springsecurityjwt:
+    image: springsecurityjwt
+    build: ./springsecurityjwt
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/spring_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - eureka-server
+        #condition: service_healthy   
+    ports:
+      - "8093:8093"
+    networks:
+      - microservices-network
+
+  config-server:
+    image: config-server
+    build: ./configserver
+    container_name: config-server
+    depends_on: 
+     - eureka-server
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_PROFILES_ACTIVE: git
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    networks:
+      - microservices-network   
+
+  configclient:
+    image: configclient
+    build: ./configclient
+    depends_on: 
+     - eureka-server
+     - config-server
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    networks:
+      - microservices-network
+
+  mysql-db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: spring_db
+    ports:
+      - "3307:3306"
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
