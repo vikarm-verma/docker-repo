@@ -1,0 +1,5 @@
+# Created at 2024-09-14T22:55:35.455
+Boot Manifest-JAR contains absolute paths in classpath 'D:\Inermediate Java Articulate E-learning\Docker & CI - CD\code files\app\productservice\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

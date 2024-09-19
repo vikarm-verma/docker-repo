@@ -1,0 +1,14 @@
+com\cognixia\jump\controller\HelloController.class
+com\cognixia\jump\model\AuthenticationResponse.class
+com\cognixia\jump\repository\UserRepository.class
+com\cognixia\jump\model\User$Role.class
+com\cognixia\jump\util\JwtUtil.class
+com\cognixia\jump\SpringSecurityJwtApplication.class
+com\cognixia\jump\controller\AuthenticationController.class
+com\cognixia\jump\controller\UserController.class
+com\cognixia\jump\service\MyUserDetails.class
+com\cognixia\jump\service\MyUserDetailsService.class
+com\cognixia\jump\config\SecurityConfiguration.class
+com\cognixia\jump\model\AuthenticationRequest.class
+com\cognixia\jump\model\User.class
+com\cognixia\jump\filter\JwtRequestFilter.class

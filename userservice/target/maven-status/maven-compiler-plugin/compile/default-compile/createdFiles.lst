@@ -1,0 +1,6 @@
+com\example\userservice\model\Product.class
+com\example\userservice\client\ProductClient.class
+com\example\userservice\client\ProductServiceFallback.class
+com\example\userservice\UserserviceApplication.class
+com\example\userservice\controller\UserController.class
+com\example\userservice\service\UserService.class
