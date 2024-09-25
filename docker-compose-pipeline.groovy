@@ -7,16 +7,16 @@ pipeline {
    stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/vikarm-verma/docker-repo.git'
+                git 'https://github.com/vikarm-verma/ec2-repo.git'
             }
         }
         stage('Docker Build and Run') {
             steps {
                 echo 'Building and running Docker containers...'
                 // Build and run all services using docker-compose
-		bat 'docker-compose down'
-                bat 'docker-compose build --no-cache'
-		bat 'docker-compose up'
+		sh 'docker-compose down'
+                sh 'docker-compose build --no-cache'
+		sh 'docker-compose up'
             }
         }
         }
